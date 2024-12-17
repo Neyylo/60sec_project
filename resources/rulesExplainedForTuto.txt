@@ -1,0 +1,33 @@
+Explications des règles :
+
+Jeu de survie et de gestion de ressources.
+
+Le but est soit de survivre un maximum de temps, soit de vous faire secourir par un évènement extérieur.
+
+Pour ce faire, vous aurez la possibilité de gérer le quotidien, au sein d'un bunker, d'un groupe de 4 amis essayant de survivre à une attaque nucléaire.
+
+Ce petit groupe a eu 60 secondes pour rassembler un maximum de ressources utiles (ou non) pour survivre le plus longtemps possible.
+
+Ces ressources seront les objets avec lesquels vous débuterez votre expérience.
+
+Chaque jour, vous aurez la possibilité d'attribuer des ressources à vos différents personnages, gérer leurs émotions, leur santé et bien d'autre...
+
+Un journal vous sera confié et vous permettra de manager votre bunker, de la répartition des vivres au choisx de vos expéditions...
+
+Des évènements extérieur vous seront proposés de manière aléatoire, rien ne vous est imposé, à vous d'accepter les offres ou de les refuser.
+
+Bonne chance à vous !
+
+
+
+
+
+
+
+TIPS :
+
+Vous pouvez cliquer sur un de vos personnages pour l'envoyer en expédition.
+
+Ne gaspillez pas vos ressources.
+
+Sacrifier un personnage peut parfois vous permettre de gagner.
