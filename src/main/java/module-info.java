@@ -1,8 +1,6 @@
 module fr.l2info.sixtysec {
     requires javafx.controls;
     requires javafx.fxml;
-
-    requires com.almasb.fxgl.all;
     requires java.desktop;
 
     opens fr.l2info.sixtysec.controllers to javafx.fxml;
