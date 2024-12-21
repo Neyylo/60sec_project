@@ -43,4 +43,19 @@ public class DBConnection {
             throw new RuntimeException(e);
         }
     }
+    public static Connection getConnection() {
+        if (connection == null) {
+            new DBConnection();
+        }
+        return connection;
+    }
+
+    public static void closeConnection() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
