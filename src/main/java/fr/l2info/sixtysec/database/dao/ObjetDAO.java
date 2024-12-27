@@ -8,8 +8,11 @@ import java.util.List;
 
 public interface ObjetDAO {
     void create(Objet objet);
-    void update(Objet objet) throws SQLException;
+    void update(Objet objet);
     void delete(Objet objet);
-    Objet findById(Integer id);
+
+
+    Objet findById(int idObjet);
+
     List<Objet> getAll();
 }

@@ -9,6 +9,6 @@ public interface PersonneDAO {
     void create(Personne personne);
     void update(Personne personne);
     void delete(Personne personne);
-    Personne findById(Integer id);
+    Personne findById(int idPersonne);
     List<Personne> getAll();
 }
