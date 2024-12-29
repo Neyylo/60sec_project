@@ -17,14 +17,33 @@ public class Character {
     }
 
     public int getId() {return id;}
+    public int getDaysWithoutEating() {return daysWithoutEating;}
+    public int getDaysWithoutDrinking() {return daysWithoutDrinking;}
+    public int getSanity() {return sanity;}
+    public HealthState getHealthState() {return healthState;}
     public void setDaysWithoutEating(int daysWithoutEating) {
         this.daysWithoutEating = daysWithoutEating;
+    }
+    public void increaseDaysWithoutEating() {
+        this.daysWithoutEating++;
+    }
+    public void decreaseDaysWithoutEating() {
+        this.daysWithoutEating = Math.max(0,this.daysWithoutEating-3);
     }
     public void setDaysWithoutDrinking(int daysWithoutDrinking) {
         this.daysWithoutDrinking = daysWithoutDrinking;
     }
+    public void increaseDaysWithoutDrinking() {
+        this.daysWithoutDrinking++;
+    }
+    public void decreaseDaysWithoutDrinking() {
+        if (this.daysWithoutDrinking>0) this.daysWithoutDrinking--;
+    }
     public void setSanity(int sanity) {
         this.sanity = sanity;
+    }
+    public void decreaseSanity(int amount) {
+        this.sanity -= amount;
     }
     public void setHealthState(HealthState healthState) {
         this.healthState = healthState;

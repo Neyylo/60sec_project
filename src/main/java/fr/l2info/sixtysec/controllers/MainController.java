@@ -1,6 +1,7 @@
 package fr.l2info.sixtysec.controllers;
 
 import fr.l2info.sixtysec.AppEntryPoint;
+import fr.l2info.sixtysec.classes.Game;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,11 +10,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainController {
+    public static Game game;
+
     public void showGameScene() {
         FXMLLoader gameFXML = new FXMLLoader(AppEntryPoint.class.getResource("game-view.fxml"));
         Scene gameScene = null;
         try {
-            gameScene = new Scene(gameFXML.load(), 600, 400);
+            gameScene = new Scene(gameFXML.load(), 640, 480);
             Stage stage = AppEntryPoint.getStage();
             stage.setScene(gameScene);
         } catch (IOException e) {
@@ -22,21 +25,13 @@ public class MainController {
     }
 
     public void startNewGame(ActionEvent actionEvent) {
-        // Effectuer les initialisations nécessaires avec la classe Game
+        game = new Game();
         showGameScene();
     }
 
     public void continueGame(ActionEvent actionEvent) {
-        // Effectuer les initialisations nécessaires avec la classe Game
+        // Effectuer les initialisations nécessaires avec la classe Game et les DAO
         showGameScene();
-    }
-
-    public void settings(ActionEvent actionEvent) {
-
-    }
-
-    public void journal(ActionEvent actionEvent) {
-        System.out.println("Journal");
     }
 
     public void exit(ActionEvent actionEvent) {

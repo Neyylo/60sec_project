@@ -19,7 +19,7 @@ public class AppEntryPoint extends Application {
     public void start(Stage primaryStage) throws IOException {
         stage = primaryStage;
         FXMLLoader mainMenu = new FXMLLoader(AppEntryPoint.class.getResource("main-view.fxml"));
-        Scene mainScene = new Scene(mainMenu.load(), 600, 400);
+        Scene mainScene = new Scene(mainMenu.load(), 640, 480);
         stage.setTitle("60 seconds!");
         stage.setScene(mainScene);
         stage.setResizable(false);

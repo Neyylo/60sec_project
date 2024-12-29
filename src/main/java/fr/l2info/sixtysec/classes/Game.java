@@ -11,15 +11,20 @@ public class Game {
     public int waterCount;
     public ArrayList<Character> characters = new ArrayList<>();
     public ArrayList<Item> shelterInventory = new ArrayList<>();
-    public ArrayList<Item> explorationInventory = new ArrayList<>();
+    public Item expeditionItem = null;
+    public Character expeditionCharacter = null;
 
-    public Game() {}
-
-    public void startGame() {
-
+    public Game(int day, int foodCount, int waterCount, ArrayList<Character> characters, ArrayList<Item> shelterInventory, Item expeditionItem, Character expeditionCharacter) {
+        this.day = day;
+        this.foodCount = foodCount;
+        this.waterCount = waterCount;
+        this.characters.addAll(characters);
+        this.shelterInventory.addAll(shelterInventory);
+        this.expeditionItem = expeditionItem;
+        this.expeditionCharacter = expeditionCharacter;
     }
 
-    public void newGame() {
+    public Game() {
         day = 1;
         Random random = new Random();
         ArrayList<Character> tempCharacters = new ArrayList<>(Arrays.asList(Character.CHARACTERS));
@@ -28,23 +33,18 @@ public class Game {
         characters.addAll(tempCharacters.subList(0, random.nextInt(3, sizeCharacters)));
         foodCount = 2* sizeCharacters;
         waterCount = 2* sizeCharacters;
-        explorationInventory.clear();
-        ArrayList<Item> tempInventory = new ArrayList<>(Arrays.asList(Item.ITEMS));
-        Collections.shuffle(tempInventory);
+        ArrayList<Item> tempInventory = new ArrayList<>(Arrays.asList(Item.ITEMS).subList(1,Item.ITEMS.length));
         int sizeInventory = tempInventory.size();
+        Collections.shuffle(tempInventory);
+        shelterInventory.add(Item.ITEMS[0]);
         shelterInventory.addAll(tempInventory.subList(0, random.nextInt(0, sizeInventory)));
     }
 
-    public void continueGame() {
-        // Faire en sorte de récupérer les données de la sauvegarde avec les DAO
-    }
-
-    public void saveGame() {
-        /* Faire en sorte de stocker les données de la sauvegarde avec les DAO
-        * Soit tout supprimer dans la BDD et tout remettre
-        * Soit update tout ce qui est déjà dans la BDD et supprimer ce qui n'est plus censé y être
-        * ex: Personnage avec une maladie = update, personnage mort = supprimé
-        * */
-
+    public void update() {
+        day++;
+        for (Character character : characters) {
+            character.increaseDaysWithoutEating();
+            character.increaseDaysWithoutDrinking();
+        }
     }
 }
