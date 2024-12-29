@@ -4,16 +4,26 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
 public class AppEntryPoint extends Application {
+    private static Stage stage;
+
+    public static Stage getStage() {
+        return stage;
+    }
+
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(AppEntryPoint.class.getResource("main-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("60 secondes");
-        stage.setScene(scene);
+    public void start(Stage primaryStage) throws IOException {
+        stage = primaryStage;
+        FXMLLoader mainMenu = new FXMLLoader(AppEntryPoint.class.getResource("main-view.fxml"));
+        Scene mainScene = new Scene(mainMenu.load(), 600, 400);
+        stage.setTitle("60 seconds!");
+        stage.setScene(mainScene);
+        stage.setResizable(false);
+        stage.initStyle(StageStyle.UTILITY);
         stage.show();
     }
 
