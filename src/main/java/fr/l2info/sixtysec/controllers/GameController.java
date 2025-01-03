@@ -10,171 +10,242 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameController {
-    @FXML
-    public Button nextDayButton;
-    @FXML
-    public Tab leisureTab;
-    @FXML
-    public Tab expeditionTab;
-    @FXML
-    public Tab resourcesTab;
-    @FXML
-    public Tab recapTab;
-    @FXML
-    public Label dayLabel;
-    @FXML
-    public Button journalButton;
-    @FXML
-    public TitledPane journalWindow;
-    @FXML
-    public AnchorPane anchorPane;
 
-    public Game game = MainController.game;
-    public ArrayList<Character> deadCharacters = new ArrayList<>();
-    private HashMap<Character, CheckBox[]> resourcesCheckboxes = new HashMap<>();
-    private int foodCheckboxCount = 0, waterCheckboxCount = 0;
-    private String expeditionMessage = null;
+    @FXML
+    private Button nextDayButton;
+    @FXML
+    private Tab expeditionTab, resourcesTab, recapTab;
+    @FXML
+    private Label dayLabel;
+    @FXML
+    private Button journalButton;
+    @FXML
+    private TitledPane journalWindow;
+    @FXML
+    private ImageView char1;
+    @FXML
+    private ImageView char2;
+    @FXML
+    private ImageView char3;
+    @FXML
+    private ImageView char4;
+    @FXML
+    private ImageView char5;
 
-    public void showJournal(ActionEvent actionEvent) {
-        journalButton.setDisable(true);
-        journalButton.setVisible(false);
-        journalWindow.setDisable(false);
-        journalWindow.setVisible(true);
-        nextDayRecap();
-        addNextDayListener();
+    private Game game;
+    private final List<Character> deadCharacters = new ArrayList<>();
+    private final Map<Character, CheckBox[]> resourcesCheckboxes = new HashMap<>();
+    private int foodCheckboxCount = 0;
+    private int waterCheckboxCount = 0;
+
+    public GameController() {
+        this.game = MainController.game;
     }
 
-    public void nextDayRecap() {
-        dayLabel.setText("Jour n°"+game.day);
-        recapTab.setContent(recapContent());
-        resourcesTab.setContent(resourcesContent());
-        expeditionTab.setContent(expeditionContent());
-        if (game.characters.isEmpty()) {
-            nextDayButton.setText("Fin...");
-            resourcesTab.setDisable(true);
-            expeditionTab.setDisable(true);
-        }
+    @FXML
+    private void initialize() {
+        updateCharacters();
+        setupJournalButton();
     }
 
-    private VBox recapContent() {
-        VBox pane = new VBox();
-        if(!game.characters.contains(game.expeditionCharacter) && expeditionMessage != null) {
-            pane.getChildren().add(new Label(game.expeditionCharacter + " n'est pas revenu de l'expédition."));
-        }
-        for (Character character: game.characters) {
-            String text = character.toString();
-            boolean deadByHunger = false, deadByThirst = false;
-            int daysWithoutEating = character.getDaysWithoutEating();
-            int daysWithoutDrinking = character.getDaysWithoutDrinking();
-            if (daysWithoutEating <= 1) text += " n'a pas très faim.\n";
-            else if (daysWithoutEating <= 5) text += " a faim.\n";
-            else if (daysWithoutEating <= 10) text += " a très faim.\n";
-            else deadByHunger = true;
-            text += character;
-            if (daysWithoutDrinking <= 1) text += " n'a pas soif.\n";
-            else if (daysWithoutDrinking <= 3) text += " a soif.\n";
-            else if (daysWithoutDrinking <= 5) text += " a très soif.\n";
-            else deadByThirst = true;
-            if (deadByHunger && deadByThirst) { text = character + " est mort de faim et de soif."; }
-            else if (deadByHunger) { text = character + " est mort de faim."; }
-            else if (deadByThirst) { text = character + " est mort de soif."; }
-            if (deadByHunger || deadByThirst) { deadCharacters.add(character); }
-            pane.getChildren().add(new Label(text));
-            pane.setSpacing(10);
-        }
-        for (Character character: deadCharacters) {
-            game.characters.remove(character);
-        }
-        return pane;
+    private void setupJournalButton() {
+        journalButton.setOnAction(this::showJournal);
     }
 
-    private VBox resourcesContent() {
-        VBox pane = new VBox();
-        foodCheckboxCount = 0; waterCheckboxCount = 0;
-        pane.getChildren().add(new Label("Il y'a "+game.foodCount+" canettes de soupe et "+game.waterCount+" bouteilles d'eau."));
-        pane.getChildren().add(new Label("Choisissez qui pourra boire et manger :"));
-        resourcesCheckboxes.clear();
-        for (Character character: game.characters) {
-            HBox hbox = new HBox();
-            CheckBox food = new CheckBox("Soupe ");
-            food.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) foodCheckboxCount++;
-                else foodCheckboxCount--;
-                updateCheckboxState();
-            });
-            CheckBox water = new CheckBox("Eau ");
-            water.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) waterCheckboxCount++;
-                else waterCheckboxCount--;
-                updateCheckboxState();
-            });
-            resourcesCheckboxes.put(character, new CheckBox[]{food, water});
-            hbox.getChildren().addAll(food, water, new Label(" pour "+character.toString()));
-            pane.getChildren().add(hbox);
-        }
-        return pane;
+    private void showJournal(ActionEvent actionEvent) {
+        toggleJournalVisibility(true);
+        updateRecap();
+        setupNextDayButton();
     }
 
-    private void updateCheckboxState() {
-        boolean disableFood = foodCheckboxCount >= game.foodCount;
-        boolean disableWater = waterCheckboxCount >= game.waterCount;
-        resourcesCheckboxes.forEach((character, checkboxes) -> {
-            if (!checkboxes[0].isSelected()) checkboxes[0].setDisable(disableFood);
-            if (game.foodCount < 0) checkboxes[0].setDisable(true);
-            if (!checkboxes[1].isSelected()) checkboxes[1].setDisable(disableWater);
-            if (game.waterCount < 0) checkboxes[1].setDisable(true);
-        });
+    private void toggleJournalVisibility(boolean visible) {
+        journalButton.setDisable(visible);
+        journalButton.setVisible(!visible);
+        journalWindow.setDisable(!visible);
+        journalWindow.setVisible(visible);
+        journalWindow.setExpanded(visible);
     }
 
-    private VBox expeditionContent() {
-        VBox pane = new VBox(new Label("Choisissez qui envoyer en expédition :"));
-        HBox hbox = new HBox();
-        ChoiceBox<Character> cbCharacter = new ChoiceBox<>();
-        cbCharacter.getItems().add(null);
-        ChoiceBox<Item> cbItem = new ChoiceBox<>();
-        cbItem.getItems().add(null);
-        for (Character character : game.characters) cbCharacter.getItems().add(character);
-        for (Item item : game.shelterInventory) if (item.hasTag(Item.Tag.EXPEDITION)) cbItem.getItems().add(item);
-        hbox.getChildren().addAll(new Label("Envoyer "), cbCharacter, new Label(" avec "), cbItem);
-        pane.getChildren().add(hbox);
-        return pane;
-    }
-
-    private void addNextDayListener() {
-        nextDayButton.setOnAction((ActionEvent event) -> {
-            if (game.characters.isEmpty()) {
-                endGame();
-            } else {
-                resourcesCheckboxes.forEach( (character, checkboxes) -> {
-                    if (checkboxes[0].isSelected()) {
-                        character.decreaseDaysWithoutEating();
-                        game.foodCount--;
-                    }
-                    if (checkboxes[1].isSelected()) {
-                        character.decreaseDaysWithoutDrinking();
-                        game.waterCount--;
-                    }
-                });
-
-                game.update();
-                nextDayRecap();
+    private void updateCharacters() {
+        game.getCharacters().forEach(character -> {
+            switch (character.getId()) {
+                case 1:
+                    char1.setVisible(true);
+                    break;
+                case 2:
+                    char2.setVisible(true);
+                    break;
+                case 3:
+                    char3.setVisible(true);
+                    break;
+                case 4:
+                    char4.setVisible(true);
+                    break;
+                case 5:
+                    char5.setVisible(true);
+                    break;
             }
         });
     }
 
+    private void updateRecap() {
+        dayLabel.setText("Jour n°" + game.getDay());
+        recapTab.setContent(buildRecapContent());
+        resourcesTab.setContent(buildResourcesContent());
+        expeditionTab.setContent(buildExpeditionContent());
+        updateTabState();
+    }
+
+    private void updateTabState() {
+        boolean noCharactersLeft = game.getCharacters().isEmpty();
+        nextDayButton.setText(noCharactersLeft ? "Fin..." : "Jour suivant");
+        resourcesTab.setDisable(noCharactersLeft);
+        expeditionTab.setDisable(noCharactersLeft);
+    }
+
+    private VBox buildRecapContent() {
+        VBox pane = new VBox();
+        if (game.getExpeditionCharacter() != null && !game.getExpeditionCharacter().isAlive()) {
+            pane.getChildren().add(new Label(game.getExpeditionCharacter() + " n'est pas revenu de l'expédition."));
+        }
+
+        List<Character> deadCharacters = new ArrayList<>();
+
+        game.getCharacters().forEach(character -> {
+            character.checkIfAlive();
+            pane.getChildren().add(new Label(character.status()));
+            if (!character.isAlive()) deadCharacters.add(character);
+        });
+
+        game.getCharacters().removeAll(deadCharacters);
+
+        return pane;
+    }
+
+    private VBox buildResourcesContent() {
+        VBox pane = new VBox();
+        pane.getChildren().add(new Label("Il y'a " + game.getFoodCount() + " canettes de soupe et " + game.getWaterCount() + " bouteilles d'eau."));
+        pane.getChildren().add(new Label("Choisissez qui pourra boire et manger :"));
+
+        resetResourceState();
+
+        game.getCharacters().forEach(character -> {
+            HBox hbox = new HBox();
+            CheckBox food = createResourceCheckbox(true);
+            CheckBox water = createResourceCheckbox(false);
+            hbox.getChildren().addAll(food, water, new Label(" pour " + character));
+            resourcesCheckboxes.put(character, new CheckBox[]{food, water});
+            pane.getChildren().add(hbox);
+        });
+
+        return pane;
+    }
+
+    private void resetResourceState() {
+        foodCheckboxCount = 0;
+        waterCheckboxCount = 0;
+        resourcesCheckboxes.clear();
+    }
+
+    private CheckBox createResourceCheckbox(boolean isFood) {
+        CheckBox checkBox = new CheckBox(isFood ? "Soupe" : "Eau");
+        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (isFood) {
+                foodCheckboxCount += newValue ? 1 : -1;
+            } else {
+                waterCheckboxCount += newValue ? 1 : -1;
+            }
+            updateResourceCheckboxState();
+        });
+        return checkBox;
+    }
+
+    private void updateResourceCheckboxState() {
+        boolean disableFood = foodCheckboxCount >= game.getFoodCount();
+        boolean disableWater = waterCheckboxCount >= game.getWaterCount();
+
+        resourcesCheckboxes.forEach((character, checkboxes) -> {
+            if (!checkboxes[0].isSelected()) checkboxes[0].setDisable(disableFood);
+            if (!checkboxes[1].isSelected()) checkboxes[1].setDisable(disableWater);
+        });
+    }
+
+    private VBox buildExpeditionContent() {
+        VBox pane = new VBox(new Label("Choisissez qui envoyer en expédition :"));
+        HBox hbox = new HBox();
+        ChoiceBox<Character> cbCharacter = new ChoiceBox<>();
+        cbCharacter.getItems().add(null);
+        cbCharacter.getItems().addAll(game.getCharacters());
+        cbCharacter.getSelectionModel()
+                   .selectedItemProperty()
+                   .addListener((observable, oldValue, newValue) -> {
+                       game.setExpeditionCharacter(newValue);
+        });
+
+        ChoiceBox<Item> cbItem = new ChoiceBox<>();
+        cbItem.getItems().add(null);
+        cbItem.getItems().addAll(game.getShelterInventory().stream()
+                .filter(item -> item.hasTag(Item.Tag.EXPEDITION))
+                .collect(Collectors.toList()));
+        cbItem.getSelectionModel()
+              .selectedItemProperty()
+              .addListener((observable, oldValue, newValue) -> {
+                  game.setExpeditionItem(newValue);
+        });
+
+        hbox.getChildren().addAll(new Label("Envoyer "), cbCharacter, new Label(" avec "), cbItem);
+        pane.getChildren().add(hbox);
+
+        return pane;
+    }
+
+    private void setupNextDayButton() {
+        nextDayButton.setOnAction(event -> {
+            if (game.getCharacters().isEmpty()) {
+                endGame();
+            } else {
+                processDayEnd();
+                game.update();
+                updateRecap();
+            }
+            toggleJournalVisibility(false);
+        });
+    }
+
+    private void processDayEnd() {
+        resourcesCheckboxes.forEach((character, checkboxes) -> {
+            if (checkboxes[0].isSelected()) {
+                character.decreaseDaysWithoutEating();
+                game.decrementFoodCount();
+            }
+            if (checkboxes[1].isSelected()) {
+                character.decreaseDaysWithoutDrinking();
+                game.decrementWaterCount();
+            }
+        });
+        if (game.getExpeditionCharacter() != null) {
+            if(game.getExpeditionItem() != null) {
+                game.removeItemFromInventory(game.getExpeditionItem());
+            }
+            OutdoorEvent.triggerRandomEvent(game);
+        }
+        updateCharacters();
+    }
+
     @FXML
     private void saveGame(ActionEvent event) {
-
+        // Save game logic here
     }
 
     @FXML
@@ -184,14 +255,12 @@ public class GameController {
     }
 
     private void endGame() {
-        FXMLLoader loader = new FXMLLoader(AppEntryPoint.class.getResource("end-view.fxml"));
-        Scene endScene = null;
         try {
-            endScene = new Scene(loader.load(), 640, 480);
-            Stage stage = AppEntryPoint.getStage();
-            stage.setScene(endScene);
+            FXMLLoader loader = new FXMLLoader(AppEntryPoint.class.getResource("end-view.fxml"));
+            Scene endScene = new Scene(loader.load(), 640, 480);
+            AppEntryPoint.sceneChange(endScene);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to load end-view.fxml", e);
         }
     }
 }

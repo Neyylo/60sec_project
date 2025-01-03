@@ -17,8 +17,7 @@ public class EndController {
         FXMLLoader mainMenu = new FXMLLoader(AppEntryPoint.class.getResource("main-view.fxml"));
         try {
             Scene mainScene = new Scene(mainMenu.load(), 640, 480);
-            Stage stage = AppEntryPoint.getStage();
-            stage.setScene(mainScene);
+            AppEntryPoint.sceneChange(mainScene);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

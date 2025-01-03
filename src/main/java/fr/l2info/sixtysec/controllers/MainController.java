@@ -2,10 +2,15 @@ package fr.l2info.sixtysec.controllers;
 
 import fr.l2info.sixtysec.AppEntryPoint;
 import fr.l2info.sixtysec.classes.Game;
+import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
@@ -17,8 +22,7 @@ public class MainController {
         Scene gameScene = null;
         try {
             gameScene = new Scene(gameFXML.load(), 640, 480);
-            Stage stage = AppEntryPoint.getStage();
-            stage.setScene(gameScene);
+            AppEntryPoint.sceneChange(gameScene);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

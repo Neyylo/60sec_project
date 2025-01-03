@@ -13,9 +13,4 @@ public class HealthState {
         this.name = name;
         this.effect = effect;
     }
-
-    public static HealthState[] HEALTH_STATES = {
-            new HealthState(0, "Healthy", null),
-            new HealthState(0, "Radiation Sickness", (character) -> character.decreaseSanity(2))
-    };
 }
