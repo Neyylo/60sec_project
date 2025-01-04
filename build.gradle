@@ -38,7 +38,6 @@ dependencies {
   implementation('com.github.almasb:fxgl:11.17') {
     exclude(group: 'org.openjfx')
   }
-
   implementation 'mysql:mysql-connector-java:8.0.33'
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
