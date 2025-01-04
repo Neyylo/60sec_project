@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.Bloom?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="480.0" minWidth="640.0" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.l2info.sixtysec.controllers.EndController">
+   <children>
+      <ImageView fitHeight="380.0" fitWidth="640.0" layoutY="60.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../../../../resources/image/dead.png" />
+         </image>
+      </ImageView>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="165.0" layoutY="60.0" prefHeight="79.0" prefWidth="310.0" text="THE END">
+         <font>
+            <Font name="Agency FB Bold" size="64.0" />
+         </font>
+         <effect>
+            <DropShadow blurType="GAUSSIAN">
+               <input>
+                  <Bloom />
+               </input>
+               <color>
+                  <Color red="1.0" green="1.0" blue="1.0" />
+               </color>
+            </DropShadow>
+         </effect>
+      </Label>
+      <Button fx:id="mainMenuButton" layoutX="272.0" layoutY="394.0" mnemonicParsing="false" onAction="#returnToMainMenu" text="Menu principal" />
+   </children>
+</AnchorPane>
