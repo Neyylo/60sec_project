@@ -1,9 +1,10 @@
 package fr.l2info.sixtysec.classes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Random;
+import fr.l2info.sixtysec.dao.MyCharacterDAOImpl;
+import fr.l2info.sixtysec.dao.MyItemDAOImpl;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Game {
     private int day;
@@ -13,15 +14,16 @@ public class Game {
     private ArrayList<Item> shelterInventory = new ArrayList<>();
     private Item expeditionItem = null;
     private Character expeditionCharacter = null;
+    private String winningMessage = null;
 
-    public Game(int day, int foodCount, int waterCount, ArrayList<Character> characters, ArrayList<Item> shelterInventory, Item expeditionItem, Character expeditionCharacter) {
+    public Game(int day, int foodCount, int waterCount, ArrayList<Character> characters, ArrayList<Item> shelterInventory) {
         this.day = day;
         this.foodCount = foodCount;
         this.waterCount = waterCount;
         this.characters.addAll(characters);
         this.shelterInventory.addAll(shelterInventory);
-        this.expeditionItem = expeditionItem;
-        this.expeditionCharacter = expeditionCharacter;
+        this.expeditionItem = null;
+        this.expeditionCharacter = null;
     }
 
     public Game() {
@@ -44,6 +46,9 @@ public class Game {
         Collections.shuffle(tempInventory);
         int sizeInventory = tempInventory.size();
         shelterInventory.addAll(tempInventory.subList(0, random.nextInt(1, sizeInventory + 1)));
+
+        this.expeditionItem = null;
+        this.expeditionCharacter = null;
     }
 
     // Getters and setters
@@ -90,18 +95,6 @@ public class Game {
         this.expeditionItem = expeditionItem;
     }
 
-    // Business logic
-    public void update() {
-        // Logic to update the game state at the end of each day
-        for (Character character : characters) {
-            character.incrementDaysWithoutEating();
-            character.incrementDaysWithoutDrinking();
-        }
-
-        // Increment day count
-        incrementDay();
-    }
-
     public void addCharacter(Character character) {
         characters.add(character);
     }
@@ -116,5 +109,58 @@ public class Game {
 
     public void removeItemFromInventory(Item item) {
         shelterInventory.remove(item);
+    }
+
+    public String getWinningMessage() {
+        return winningMessage;
+    }
+
+    public void setWinningMessage(String winningMessage) {
+        this.winningMessage = winningMessage;
+    }
+
+    public void update() {
+        for (Character character : characters) {
+            character.incrementDaysWithoutEating();
+            character.incrementDaysWithoutDrinking();
+        }
+        List<Character> deadCharacters = characters.stream()
+                                                   .filter(character -> !character.isAlive())
+                                                   .collect(Collectors.toList());
+        characters.removeAll(deadCharacters);
+        expeditionCharacter = null;
+        expeditionItem = null;
+        incrementDay();
+    }
+
+    public void save() {
+        MyCharacterDAOImpl characterDAO = new MyCharacterDAOImpl();
+        MyItemDAOImpl itemDAO = new MyItemDAOImpl();
+        if (!characterDAO.getAll().isEmpty()) {
+            List<Character> lastSavedCharacters = characterDAO.getAll();
+            characters.forEach(characterDAO::update);
+            lastSavedCharacters.removeAll(characters);
+            lastSavedCharacters.forEach(characterDAO::delete);
+        } else {
+            characters.forEach(characterDAO::create);
+        }
+        if (!itemDAO.getAll().isEmpty()) {
+            List<Item> lastSavedItems = itemDAO.getAll();
+            Collections.sort(lastSavedItems);
+            Collections.sort(shelterInventory);
+            if(!lastSavedItems.equals(shelterInventory)) {
+                lastSavedItems.forEach(itemDAO::delete);
+            }
+        } else {
+            shelterInventory.forEach(itemDAO::create);
+        }
+    }
+
+    public Game load() {
+        MyCharacterDAOImpl characterDAO = new MyCharacterDAOImpl();
+        MyItemDAOImpl itemDAO = new MyItemDAOImpl();
+        List<Character> lastSavedCharacters = characterDAO.getAll();
+        List<Item> lastSavedItems = itemDAO.getAll();
+        return new Game();
     }
 }

@@ -2,15 +2,9 @@ package fr.l2info.sixtysec.controllers;
 
 import fr.l2info.sixtysec.AppEntryPoint;
 import fr.l2info.sixtysec.classes.Game;
-import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.IOException;
 

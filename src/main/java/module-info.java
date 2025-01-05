@@ -7,7 +7,7 @@ module fr.l2info.sixtysec {
     requires mysql.connector.j;
     requires java.sql;
     requires java.naming;
-
+    requires annotations;
 
 
     opens fr.l2info.sixtysec.controllers to javafx.fxml;

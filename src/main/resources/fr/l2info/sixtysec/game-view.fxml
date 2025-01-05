@@ -71,11 +71,12 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                  <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                         <Tab fx:id="recapTab" closable="false" text="Résumé" />
                       <Tab fx:id="resourcesTab" closable="false" text="Ressources" />
                       <Tab fx:id="expeditionTab" closable="false" text="Éxpedition" />
+                        <Tab fx:id="indoorEventTab" closable="false" text="Évenement à la porte" />
                     </tabs>
                   </TabPane>
                   <ButtonBar prefHeight="40.0" prefWidth="200.0">

@@ -1,4 +1,4 @@
-package fr.l2info.sixtysec.database;
+package fr.l2info.sixtysec.dao;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 

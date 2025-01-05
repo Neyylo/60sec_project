@@ -1,20 +1,16 @@
 package fr.l2info.sixtysec.controllers;
 
 import fr.l2info.sixtysec.AppEntryPoint;
+import fr.l2info.sixtysec.classes.*;
 import fr.l2info.sixtysec.classes.Character;
-import fr.l2info.sixtysec.classes.Game;
-import fr.l2info.sixtysec.classes.Item;
-import fr.l2info.sixtysec.classes.OutdoorEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
@@ -25,7 +21,9 @@ public class GameController {
     @FXML
     private Button nextDayButton;
     @FXML
-    private Tab expeditionTab, resourcesTab, recapTab;
+    private Tab expeditionTab, resourcesTab, recapTab, indoorEventTab;
+    @FXML
+    private TabPane tabPane;
     @FXML
     private Label dayLabel;
     @FXML
@@ -44,13 +42,20 @@ public class GameController {
     private ImageView char5;
 
     private Game game;
-    private final List<Character> deadCharacters = new ArrayList<>();
     private final Map<Character, CheckBox[]> resourcesCheckboxes = new HashMap<>();
     private int foodCheckboxCount = 0;
     private int waterCheckboxCount = 0;
+    private Character expeditionCharacter = null;
+    private Item expeditionItem = null;
+    private boolean indoorEventTabHasBeenSelected = false;
+    private List<Character> aliveCharacters = new ArrayList<>();
 
     public GameController() {
         this.game = MainController.game;
+    }
+
+    public Game getGame() {
+        return game;
     }
 
     @FXML
@@ -100,10 +105,15 @@ public class GameController {
     }
 
     private void updateRecap() {
+        aliveCharacters = game.getCharacters().stream()
+                              .filter(Character::isAlive)
+                              .collect(Collectors.toList());
+        resetExpeditionSetup();
         dayLabel.setText("Jour n°" + game.getDay());
         recapTab.setContent(buildRecapContent());
         resourcesTab.setContent(buildResourcesContent());
         expeditionTab.setContent(buildExpeditionContent());
+        setupIndoorEventTab();
         updateTabState();
     }
 
@@ -112,6 +122,8 @@ public class GameController {
         nextDayButton.setText(noCharactersLeft ? "Fin..." : "Jour suivant");
         resourcesTab.setDisable(noCharactersLeft);
         expeditionTab.setDisable(noCharactersLeft);
+        indoorEventTab.setDisable(noCharactersLeft);
+        tabPane.getSelectionModel().select(recapTab);
     }
 
     private VBox buildRecapContent() {
@@ -120,15 +132,10 @@ public class GameController {
             pane.getChildren().add(new Label(game.getExpeditionCharacter() + " n'est pas revenu de l'expédition."));
         }
 
-        List<Character> deadCharacters = new ArrayList<>();
-
         game.getCharacters().forEach(character -> {
             character.checkIfAlive();
             pane.getChildren().add(new Label(character.status()));
-            if (!character.isAlive()) deadCharacters.add(character);
         });
-
-        game.getCharacters().removeAll(deadCharacters);
 
         return pane;
     }
@@ -140,14 +147,21 @@ public class GameController {
 
         resetResourceState();
 
-        game.getCharacters().forEach(character -> {
+        aliveCharacters.forEach(character -> {
+            if (!resourcesCheckboxes.containsKey(character)) {
+                CheckBox food = createResourceCheckbox(true);
+                CheckBox water = createResourceCheckbox(false);
+                resourcesCheckboxes.put(character, new CheckBox[]{food, water});
+            }
             HBox hbox = new HBox();
-            CheckBox food = createResourceCheckbox(true);
-            CheckBox water = createResourceCheckbox(false);
-            hbox.getChildren().addAll(food, water, new Label(" pour " + character));
-            resourcesCheckboxes.put(character, new CheckBox[]{food, water});
+            hbox.getChildren().addAll(
+                    resourcesCheckboxes.get(character)[0],
+                    resourcesCheckboxes.get(character)[1],
+                    new Label(" pour " + character));
             pane.getChildren().add(hbox);
         });
+
+        updateResourceCheckboxState();
 
         return pane;
     }
@@ -159,7 +173,7 @@ public class GameController {
     }
 
     private CheckBox createResourceCheckbox(boolean isFood) {
-        CheckBox checkBox = new CheckBox(isFood ? "Soupe" : "Eau");
+        CheckBox checkBox = new CheckBox(isFood ? "Soupe " : "Eau ");
         checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (isFood) {
                 foodCheckboxCount += newValue ? 1 : -1;
@@ -186,11 +200,11 @@ public class GameController {
         HBox hbox = new HBox();
         ChoiceBox<Character> cbCharacter = new ChoiceBox<>();
         cbCharacter.getItems().add(null);
-        cbCharacter.getItems().addAll(game.getCharacters());
+        cbCharacter.getItems().addAll(aliveCharacters);
         cbCharacter.getSelectionModel()
                    .selectedItemProperty()
                    .addListener((observable, oldValue, newValue) -> {
-                       game.setExpeditionCharacter(newValue);
+                       expeditionCharacter = newValue;
         });
 
         ChoiceBox<Item> cbItem = new ChoiceBox<>();
@@ -201,7 +215,7 @@ public class GameController {
         cbItem.getSelectionModel()
               .selectedItemProperty()
               .addListener((observable, oldValue, newValue) -> {
-                  game.setExpeditionItem(newValue);
+                  expeditionItem = newValue;
         });
 
         hbox.getChildren().addAll(new Label("Envoyer "), cbCharacter, new Label(" avec "), cbItem);
@@ -210,16 +224,39 @@ public class GameController {
         return pane;
     }
 
+    private void resetExpeditionSetup() {
+        expeditionCharacter = null;
+        expeditionItem = null;
+    }
+
+    private void changeExpeditionSetup() {
+        game.setExpeditionCharacter(expeditionCharacter);
+        game.setExpeditionItem(expeditionItem);
+    }
+
+    private void setupIndoorEventTab() {
+        indoorEventTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue && !indoorEventTabHasBeenSelected) {
+                if (IndoorEvent.triggerRandomEvent(this)) {
+                    indoorEventTab.setDisable(true);
+                    indoorEventTabHasBeenSelected = true;
+                } else {
+                    indoorEventTab.setContent(new Label("Vous n'avez rien entendu à la porte..."));
+                }
+            }
+        });
+    }
+
     private void setupNextDayButton() {
         nextDayButton.setOnAction(event -> {
-            if (game.getCharacters().isEmpty()) {
+            if (aliveCharacters.isEmpty() || game.getWinningMessage() != null) {
                 endGame();
             } else {
+                changeExpeditionSetup();
                 processDayEnd();
-                game.update();
-                updateRecap();
             }
             toggleJournalVisibility(false);
+            updateRecap();
         });
     }
 
@@ -235,17 +272,16 @@ public class GameController {
             }
         });
         if (game.getExpeditionCharacter() != null) {
-            if(game.getExpeditionItem() != null) {
-                game.removeItemFromInventory(game.getExpeditionItem());
-            }
-            OutdoorEvent.triggerRandomEvent(game);
+            OutdoorEvent.triggerRandomEvent(this);
         }
         updateCharacters();
+        game.update();
     }
 
     @FXML
     private void saveGame(ActionEvent event) {
-        // Save game logic here
+        // À réactiver
+        // game.save();
     }
 
     @FXML
