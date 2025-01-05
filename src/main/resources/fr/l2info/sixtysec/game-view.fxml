@@ -19,32 +19,32 @@
    <children>
       <ImageView fitHeight="420.0" fitWidth="640.0" layoutY="30.0" pickOnBounds="true">
          <image>
-            <Image url="@../../../../../../resources/image/background.png" />
+            <Image url="@images/background.png" />
          </image>
       </ImageView>
       <ImageView fx:id="char1" fitHeight="120.0" fitWidth="80.0" focusTraversable="true" layoutX="144.0" layoutY="274.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@../../../../../../resources/image/matheogingembre.png" />
+            <Image url="@images/matheogingembre.png" />
          </image>
       </ImageView>
       <ImageView fx:id="char2" fitHeight="120.0" fitWidth="80.0" focusTraversable="true" layoutX="212.0" layoutY="255.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@../../../../../../resources/image/matheogingembre.png" />
+            <Image url="@images/matheogingembre.png" />
          </image>
       </ImageView>
       <ImageView fx:id="char3" fitHeight="120.0" fitWidth="80.0" focusTraversable="true" layoutX="292.0" layoutY="248.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@../../../../../../resources/image/matheogingembre.png" />
+            <Image url="@images/matheogingembre.png" />
          </image>
       </ImageView>
       <ImageView fx:id="char4" fitHeight="120.0" fitWidth="80.0" focusTraversable="true" layoutX="391.0" layoutY="248.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@../../../../../../resources/image/matheogingembre.png" />
+            <Image url="@images/matheogingembre.png" />
          </image>
       </ImageView>
       <ImageView fx:id="char5" fitHeight="120.0" fitWidth="80.0" focusTraversable="true" layoutX="351.0" layoutY="338.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@../../../../../../resources/image/matheogingembre.png" />
+            <Image url="@images/matheogingembre.png" />
          </image>
       </ImageView>
       <Button fx:id="journalButton" alignment="TOP_LEFT" cache="true" contentDisplay="CENTER" layoutX="444.0" layoutY="306.0" mnemonicParsing="false" prefHeight="144.0" prefWidth="195.0" style="-fx-background-color: transparent;" text="Journal" textFill="TRANSPARENT">
@@ -54,7 +54,7 @@
          <graphic>
             <ImageView fitHeight="126.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../../../../../resources/image/JOURNAL.png" />
+                  <Image url="@images/JOURNAL.png" />
                </image>
             </ImageView>
          </graphic>

@@ -60,8 +60,9 @@ public class GameController {
 
     @FXML
     private void initialize() {
-        updateCharacters();
         setupJournalButton();
+        updateAliveCharacters();
+        updateCharactersSprites();
     }
 
     private void setupJournalButton() {
@@ -82,8 +83,8 @@ public class GameController {
         journalWindow.setExpanded(visible);
     }
 
-    private void updateCharacters() {
-        game.getCharacters().forEach(character -> {
+    private void updateCharactersSprites() {
+        aliveCharacters.forEach(character -> {
             switch (character.getId()) {
                 case 1:
                     char1.setVisible(true);
@@ -104,10 +105,13 @@ public class GameController {
         });
     }
 
-    private void updateRecap() {
+    private void updateAliveCharacters() {
         aliveCharacters = game.getCharacters().stream()
-                              .filter(Character::isAlive)
-                              .collect(Collectors.toList());
+                .filter(Character::isAlive)
+                .collect(Collectors.toList());
+    }
+
+    private void updateRecap() {
         resetExpeditionSetup();
         dayLabel.setText("Jour n°" + game.getDay());
         recapTab.setContent(buildRecapContent());
@@ -115,10 +119,11 @@ public class GameController {
         expeditionTab.setContent(buildExpeditionContent());
         setupIndoorEventTab();
         updateTabState();
+        updateAliveCharacters();
     }
 
     private void updateTabState() {
-        boolean noCharactersLeft = game.getCharacters().isEmpty();
+        boolean noCharactersLeft = aliveCharacters.isEmpty();
         nextDayButton.setText(noCharactersLeft ? "Fin..." : "Jour suivant");
         resourcesTab.setDisable(noCharactersLeft);
         expeditionTab.setDisable(noCharactersLeft);
@@ -128,9 +133,6 @@ public class GameController {
 
     private VBox buildRecapContent() {
         VBox pane = new VBox();
-        if (game.getExpeditionCharacter() != null && !game.getExpeditionCharacter().isAlive()) {
-            pane.getChildren().add(new Label(game.getExpeditionCharacter() + " n'est pas revenu de l'expédition."));
-        }
 
         game.getCharacters().forEach(character -> {
             character.checkIfAlive();
@@ -209,9 +211,7 @@ public class GameController {
 
         ChoiceBox<Item> cbItem = new ChoiceBox<>();
         cbItem.getItems().add(null);
-        cbItem.getItems().addAll(game.getShelterInventory().stream()
-                .filter(item -> item.hasTag(Item.Tag.EXPEDITION))
-                .collect(Collectors.toList()));
+        cbItem.getItems().addAll(game.getShelterInventory());
         cbItem.getSelectionModel()
               .selectedItemProperty()
               .addListener((observable, oldValue, newValue) -> {
@@ -237,9 +237,10 @@ public class GameController {
     private void setupIndoorEventTab() {
         indoorEventTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue && !indoorEventTabHasBeenSelected) {
+                indoorEventTabHasBeenSelected = true;
                 if (IndoorEvent.triggerRandomEvent(this)) {
                     indoorEventTab.setDisable(true);
-                    indoorEventTabHasBeenSelected = true;
+                    updateTabState();
                 } else {
                     indoorEventTab.setContent(new Label("Vous n'avez rien entendu à la porte..."));
                 }
@@ -274,14 +275,13 @@ public class GameController {
         if (game.getExpeditionCharacter() != null) {
             OutdoorEvent.triggerRandomEvent(this);
         }
-        updateCharacters();
+        updateCharactersSprites();
         game.update();
     }
 
     @FXML
     private void saveGame(ActionEvent event) {
-        // À réactiver
-        // game.save();
+        game.save();
     }
 
     @FXML
@@ -290,7 +290,8 @@ public class GameController {
         System.exit(0);
     }
 
-    private void endGame() {
+    public void endGame() {
+        game.clear();
         try {
             FXMLLoader loader = new FXMLLoader(AppEntryPoint.class.getResource("end-view.fxml"));
             Scene endScene = new Scene(loader.load(), 640, 480);

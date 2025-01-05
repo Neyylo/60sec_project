@@ -1,6 +1,7 @@
 package fr.l2info.sixtysec.classes;
 
 import fr.l2info.sixtysec.dao.MyCharacterDAOImpl;
+import fr.l2info.sixtysec.dao.MyGameDAOImpl;
 import fr.l2info.sixtysec.dao.MyItemDAOImpl;
 
 import java.util.*;
@@ -16,7 +17,7 @@ public class Game {
     private Character expeditionCharacter = null;
     private String winningMessage = null;
 
-    public Game(int day, int foodCount, int waterCount, ArrayList<Character> characters, ArrayList<Item> shelterInventory) {
+    public Game(int day, int foodCount, int waterCount, List<Character> characters, List<Item> shelterInventory) {
         this.day = day;
         this.foodCount = foodCount;
         this.waterCount = waterCount;
@@ -136,31 +137,43 @@ public class Game {
     public void save() {
         MyCharacterDAOImpl characterDAO = new MyCharacterDAOImpl();
         MyItemDAOImpl itemDAO = new MyItemDAOImpl();
-        if (!characterDAO.getAll().isEmpty()) {
-            List<Character> lastSavedCharacters = characterDAO.getAll();
+        MyGameDAOImpl gameDAO = new MyGameDAOImpl();
+        List<Character> lastSavedCharacters = characterDAO.getAll();
+        List<Item> lastSavedItems = itemDAO.getAll();
+        if (lastSavedCharacters != null && !lastSavedCharacters.isEmpty()) {
             characters.forEach(characterDAO::update);
             lastSavedCharacters.removeAll(characters);
             lastSavedCharacters.forEach(characterDAO::delete);
         } else {
             characters.forEach(characterDAO::create);
         }
-        if (!itemDAO.getAll().isEmpty()) {
-            List<Item> lastSavedItems = itemDAO.getAll();
-            Collections.sort(lastSavedItems);
-            Collections.sort(shelterInventory);
-            if(!lastSavedItems.equals(shelterInventory)) {
-                lastSavedItems.forEach(itemDAO::delete);
-            }
+        if (lastSavedItems != null && !lastSavedItems.isEmpty()) {
+            lastSavedItems.forEach(itemDAO::delete);
+            shelterInventory.forEach(itemDAO::create);
         } else {
             shelterInventory.forEach(itemDAO::create);
         }
+        if (gameDAO.getGame() != null) {
+            gameDAO.update(this);
+        } else {
+            gameDAO.create(this);
+        }
     }
 
-    public Game load() {
+    public void clear() {
         MyCharacterDAOImpl characterDAO = new MyCharacterDAOImpl();
         MyItemDAOImpl itemDAO = new MyItemDAOImpl();
+        MyGameDAOImpl gameDAO = new MyGameDAOImpl();
         List<Character> lastSavedCharacters = characterDAO.getAll();
         List<Item> lastSavedItems = itemDAO.getAll();
-        return new Game();
+        if (lastSavedCharacters != null && !lastSavedCharacters.isEmpty()) {
+            lastSavedCharacters.forEach(characterDAO::delete);
+        }
+        if (lastSavedItems != null && !lastSavedItems.isEmpty()) {
+            lastSavedItems.forEach(itemDAO::delete);
+        }
+        if (gameDAO.getGame() != null) {
+            gameDAO.delete(this);
+        }
     }
 }

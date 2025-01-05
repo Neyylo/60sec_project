@@ -91,6 +91,7 @@ public abstract class GameEvent {
                 summaryText = badChoiceAction.apply(game);
             }
             showSummary(summaryText);
+            if (game.getWinningMessage() != null) gameController.endGame();
         });
     }
 

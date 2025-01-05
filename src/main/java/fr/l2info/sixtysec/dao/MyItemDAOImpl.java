@@ -17,10 +17,10 @@ public class MyItemDAOImpl implements MyItemDAO {
     public void create(Item item) {
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement("INSERT INTO MyItem(idItem, nom, consommable)");
+            preparedStatement = connection.prepareStatement("INSERT INTO MyItem(id, nom)" +
+                    "VALUES (?, ?)");
             preparedStatement.setInt(1, item.getId());
             preparedStatement.setString(2, item.getName());
-            preparedStatement.setString(3, item.getTag().toString());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -32,10 +32,9 @@ public class MyItemDAOImpl implements MyItemDAO {
     public void update(Item item) {
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement("UPDATE MyItem SET  nom = ?, consommable = ? WHERE idItem = ? ");
+            preparedStatement = connection.prepareStatement("UPDATE MyItem SET  nom = ?, WHERE id = ? ");
             preparedStatement.setString(1, item.getName());
-            preparedStatement.setString(2, item.getTag().toString());
-            preparedStatement.setInt(3, item.getId());
+            preparedStatement.setInt(2, item.getId());
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -46,7 +45,7 @@ public class MyItemDAOImpl implements MyItemDAO {
     public void delete(Item item){
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement("DELETE FROM MyItem WHERE idItem = ?");
+            preparedStatement = connection.prepareStatement("DELETE FROM MyItem WHERE id = ?");
             preparedStatement.setInt(1, item.getId());
             preparedStatement.executeUpdate();
 
@@ -60,20 +59,14 @@ public class MyItemDAOImpl implements MyItemDAO {
     public Item findById(int idItem) {
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement("SELECT * FROM MyItem WHERE idItem = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM MyItem WHERE id = ?");
             preparedStatement.setInt(1, idItem);
             ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next()) {
-                int rsIdItem = rs.getInt("idItem");
+                int rsIdItem = rs.getInt("id");
                 String rsNom = rs.getString("nom");
-                String rsTag = rs.getString("consommable");
-                for (Item.Tag tag : Item.Tag.values()) {
-                    if (rsTag.equals(tag.toString())) {
-                        return new Item(rsIdItem, rsNom, tag);
-                    }
-                }
-                throw new IllegalStateException("Item tag does not exist");
+                return new Item(rsIdItem, rsNom);
             }
 
         } catch (SQLException e) {
@@ -86,26 +79,21 @@ public class MyItemDAOImpl implements MyItemDAO {
     @Override
     public List<Item> getAll() {
         List<Item> items = new ArrayList<>();
-
-        try{
-            Statement statement = connection.createStatement();
-            ResultSet rs  = statement.executeQuery("SELECT * FROM MyItem");
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement();
+            rs = statement.executeQuery("SELECT * FROM MyItem");
 
             while (rs.next()) {
-                int rsIdItem = rs.getInt("idItem");
+                int rsIdItem = rs.getInt("id");
                 String rsName = rs.getString("nom");
-                String rsTag = rs.getString("consommable");
-                for (Item.Tag tag : Item.Tag.values()) {
-                    if (rsTag.equals(tag.toString())) {
-                         new Item(rsIdItem, rsName, tag);
-                    }
-                }
-                throw new IllegalStateException("Item tag not found");
+                items.add(new Item(rsIdItem, rsName));
             }
         }catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return items;
     }
 
 }

@@ -18,13 +18,12 @@ public class MyCharacterDAOImpl implements MyCharacterDAO {
         PreparedStatement preparedStatement = null;
         try {
             preparedStatement = connection.prepareStatement(
-                    "INSERT INTO MyCharacter (idCharacter, nom, joursFaim, joursSoif, etatSante) " +
-                    "VALUES (?, ?, ?, ?, ?)");
+                    "INSERT INTO MyCharacter (id, nom, joursFaim, joursSoif) " +
+                    "VALUES (?, ?, ?, ?)");
             preparedStatement.setInt(1, character.getId());
             preparedStatement.setString(2, character.getName());
             preparedStatement.setInt(3, character.getDaysWithoutEating());
             preparedStatement.setInt(4, character.getDaysWithoutDrinking());
-            //preparedStatement.setInt(5, character.getHealthState());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -38,14 +37,12 @@ public class MyCharacterDAOImpl implements MyCharacterDAO {
             preparedStatement = connection.prepareStatement("UPDATE MyCharacter SET " +
                     "nom = ?, " +
                     "joursFaim = ?, " +
-                    "joursSoif = ?, " +
-                    "etatSante = ? " +
-                    "WHERE idCharacter = ?");
+                    "joursSoif = ? " +
+                    "WHERE id = ?");
             preparedStatement.setString(1, character.getName());
             preparedStatement.setInt(2, character.getDaysWithoutEating());
             preparedStatement.setInt(3, character.getDaysWithoutDrinking());
-            //preparedStatement.setInt(4, character.getHealthState());
-            preparedStatement.setInt(5, character.getId());
+            preparedStatement.setInt(4, character.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -54,7 +51,9 @@ public class MyCharacterDAOImpl implements MyCharacterDAO {
 
     @Override
     public void delete(Character character) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM MyCharacter WHERE idCharacter = ?")) {
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement("DELETE FROM MyCharacter WHERE id = ?");
             preparedStatement.setInt(1, character.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -64,8 +63,9 @@ public class MyCharacterDAOImpl implements MyCharacterDAO {
 
     @Override
     public Character findById(int idCharacter) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM MyCharacter WHERE idCharacter = ?")) {
-
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement("SELECT * FROM MyCharacter WHERE id = ?");
             preparedStatement.setInt(1, idCharacter);
             ResultSet rs = preparedStatement.executeQuery();
 
@@ -74,8 +74,6 @@ public class MyCharacterDAOImpl implements MyCharacterDAO {
                 String rsNom = rs.getString("nom");
                 int rsJoursFaim = rs.getInt("joursFaim");
                 int rsJoursSoif = rs.getInt("joursSoif");
-                int rsAEtatSante = rs.getInt("etatSante");
-                // A changer
                 return new Character(rsIdCharacter, rsNom, rsJoursFaim, rsJoursSoif, true);
             }
 
@@ -89,17 +87,16 @@ public class MyCharacterDAOImpl implements MyCharacterDAO {
     @Override
     public List<Character> getAll() {
         List<Character> characters = new ArrayList<>();
-
-        try (Statement statement = connection.createStatement();
-             ResultSet rs = statement.executeQuery("SELECT * FROM MyCharacter")
-        ) {
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement();
+            rs = statement.executeQuery("SELECT * FROM MyCharacter");
             while (rs.next()) {
-                int rsIdCharacter = rs.getInt("idCharacter");
+                int rsIdCharacter = rs.getInt("id");
                 String rsNom = rs.getString("nom");
                 int rsJoursFaim = rs.getInt("joursFaim");
                 int rsJoursSoif = rs.getInt("joursSoif");
-                int rsAEtatSante = rs.getInt("etatSante");
-                // A changer
                 characters.add(new Character(rsIdCharacter, rsNom, rsJoursFaim, rsJoursSoif, true));
             }
         } catch (SQLException e) {

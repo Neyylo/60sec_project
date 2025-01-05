@@ -9,15 +9,16 @@
    <children>
       <ImageView fitHeight="400.0" fitWidth="640.0" layoutY="40.0">
          <image>
-            <Image url="@../../../../../../resources/image/imgAccueil.jpg" />
+            <Image url="@images/imgAccueil.jpg" />
          </image>
       </ImageView>
       <Button layoutX="173.0" layoutY="188.0" mnemonicParsing="false" onAction="#startNewGame" prefHeight="51.0" prefWidth="293.0" text="Nouvelle Partie" />
-      <Button layoutX="173.0" layoutY="240.0" mnemonicParsing="false" onAction="#continueGame" prefHeight="51.0" prefWidth="293.0" text="Continuer" />
+      <Button fx:id="continueButton" layoutX="173.0" layoutY="240.0" mnemonicParsing="false" onAction="#continueGame" prefHeight="51.0" prefWidth="293.0" text="Continuer" />
+      <Button layoutX="539.0" layoutY="40.0" mnemonicParsing="false" onAction="#showRules" prefHeight="35.0" prefWidth="86.0" text="Règles" />
       <Button layoutX="539.0" layoutY="404.0" mnemonicParsing="false" onAction="#exit" prefHeight="35.0" prefWidth="86.0" text="Quitter" />
       <ImageView fitHeight="185.0" fitWidth="294.0" layoutX="14.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../../../resources/image/logo.png" />
+            <Image url="@images/logo.png" />
          </image>
       </ImageView>
    </children>

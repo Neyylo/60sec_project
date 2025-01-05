@@ -9,15 +9,13 @@ public class Character {
     private int daysWithoutDrinking;
     private boolean isAlive;
 
-    public static final ArrayList<Character> CHARACTERS = new ArrayList<Character>();
+    public static final ArrayList<Character> CHARACTERS = new ArrayList<>();
 
-    static {
-        final Character johnBackflip          = new Character(1,"John Backflip");
-        final Character martapagnan           = new Character(2,"Martapagnan");
-        final Character stiveunneDeQuoicoubeh = new Character(3,"Stiveunne de Quoicoubeh");
-        final Character nolanBebou            = new Character(4,"Nolan Bébou");
-        final Character matheogingembre       = new Character(5,"Mathéogingembre");
-    }
+    public static final Character johnBackflip          = new Character(1,"John Backflip");
+    public static final Character martapagnan           = new Character(2,"Martapagnan");
+    public static final Character stiveunneDeQuoicoubeh = new Character(3,"Stiveunne de Quoicoubeh");
+    public static final Character nolanBebou            = new Character(4,"Nolan Bébou");
+    public static final Character matheogingembre       = new Character(5,"Mathéogingembre");
 
     public Character(int id, String name, int daysWithoutEating, int daysWithoutDrinking, boolean isAlive) {
         this.id = id;
@@ -39,10 +37,6 @@ public class Character {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getDaysWithoutEating() {
@@ -80,11 +74,7 @@ public class Character {
     }
 
     public void checkIfAlive() {
-        if (daysWithoutEating > 10 || daysWithoutDrinking > 5) {
-            this.isAlive = false;
-        } else {
-            this.isAlive = true;
-        }
+        this.isAlive = daysWithoutEating <= 10 && daysWithoutDrinking <= 5;
     }
 
     public String status() {
