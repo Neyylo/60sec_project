@@ -24,6 +24,8 @@ public class EndController {
         if (Objects.equals(winningMessage, "Vous avez gagné... le coeur de Nabil?")) {
             endMessage.setText(winningMessage);
             Image image = new Image(AppEntryPoint.class.getResourceAsStream("images/nabilAnge.png"));
+            endImage.setX(195);
+            endImage.setY(0);
             endImage.setImage(image);
         }
         else if (winningMessage != null) {
