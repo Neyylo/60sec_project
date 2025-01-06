@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * The type Game controller.
+ */
 public class GameController {
 
     @FXML
@@ -41,7 +44,7 @@ public class GameController {
     @FXML
     private ImageView char5;
 
-    private Game game;
+    private final Game game = MainController.game;
     private final Map<Character, CheckBox[]> resourcesCheckboxes = new HashMap<>();
     private int foodCheckboxCount = 0;
     private int waterCheckboxCount = 0;
@@ -50,14 +53,18 @@ public class GameController {
     private boolean indoorEventTabHasBeenSelected = false;
     private List<Character> aliveCharacters = new ArrayList<>();
 
-    public GameController() {
-        this.game = MainController.game;
-    }
-
+    /**
+     * Gets the current game.
+     *
+     * @return the game
+     */
     public Game getGame() {
         return game;
     }
 
+    /**
+     * Initializes the game scene.
+     */
     @FXML
     private void initialize() {
         setupJournalButton();
@@ -65,16 +72,29 @@ public class GameController {
         updateCharactersSprites();
     }
 
+    /**
+     * Setups the action when clicking the journal button.
+     */
     private void setupJournalButton() {
         journalButton.setOnAction(this::showJournal);
     }
 
+    /**
+     * Shows the journal content and update it.
+     *
+     * @param actionEvent
+     */
     private void showJournal(ActionEvent actionEvent) {
         toggleJournalVisibility(true);
         updateRecap();
         setupNextDayButton();
     }
 
+    /**
+     * Toggles the journal window and button.
+     *
+     * @param visible is the journal visible
+     */
     private void toggleJournalVisibility(boolean visible) {
         journalButton.setDisable(visible);
         journalButton.setVisible(!visible);
@@ -83,6 +103,9 @@ public class GameController {
         journalWindow.setExpanded(visible);
     }
 
+    /**
+     * Updates the characters sprites to be shown or not.
+     */
     private void updateCharactersSprites() {
         aliveCharacters.forEach(character -> {
             switch (character.getId()) {
@@ -105,23 +128,33 @@ public class GameController {
         });
     }
 
+    /**
+     * Updates the list of characters that are alive.
+     */
     private void updateAliveCharacters() {
         aliveCharacters = game.getCharacters().stream()
                 .filter(Character::isAlive)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Updates all the tabs of the journal.
+     */
     private void updateRecap() {
         resetExpeditionSetup();
         dayLabel.setText("Jour n°" + game.getDay());
         recapTab.setContent(buildRecapContent());
         resourcesTab.setContent(buildResourcesContent());
         expeditionTab.setContent(buildExpeditionContent());
+        indoorEventTabHasBeenSelected = false;
         setupIndoorEventTab();
         updateTabState();
         updateAliveCharacters();
     }
 
+    /**
+     * Disables the tabs if all characters are dead.
+     */
     private void updateTabState() {
         boolean noCharactersLeft = aliveCharacters.isEmpty();
         nextDayButton.setText(noCharactersLeft ? "Fin..." : "Jour suivant");
@@ -131,17 +164,26 @@ public class GameController {
         tabPane.getSelectionModel().select(recapTab);
     }
 
+    /**
+     * Returns the VBox containing the status of all alive characters.
+     *
+     * @return the VBox containing the summary
+     */
     private VBox buildRecapContent() {
         VBox pane = new VBox();
 
         game.getCharacters().forEach(character -> {
-            character.checkIfAlive();
             pane.getChildren().add(new Label(character.status()));
         });
 
         return pane;
     }
 
+    /**
+     * Returns the checkboxes allowing to manage the resources between characters inside a VBox.
+     *
+     * @return the VBox containing the checkboxes
+     */
     private VBox buildResourcesContent() {
         VBox pane = new VBox();
         pane.getChildren().add(new Label("Il y'a " + game.getFoodCount() + " canettes de soupe et " + game.getWaterCount() + " bouteilles d'eau."));
@@ -149,6 +191,7 @@ public class GameController {
 
         resetResourceState();
 
+        // For each character, maps its checkboxes to the character and adds it to the container
         aliveCharacters.forEach(character -> {
             if (!resourcesCheckboxes.containsKey(character)) {
                 CheckBox food = createResourceCheckbox(true);
@@ -168,12 +211,21 @@ public class GameController {
         return pane;
     }
 
+    /**
+     * Resets the checkboxes that manages the resources.
+     */
     private void resetResourceState() {
         foodCheckboxCount = 0;
         waterCheckboxCount = 0;
         resourcesCheckboxes.clear();
     }
 
+    /**
+     * Returns a checkbox that will be linked to a character and either the food or water count.
+     *
+     * @param isFood is the checkbox for food or water
+     * @return the checkbox
+     */
     private CheckBox createResourceCheckbox(boolean isFood) {
         CheckBox checkBox = new CheckBox(isFood ? "Soupe " : "Eau ");
         checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -187,6 +239,10 @@ public class GameController {
         return checkBox;
     }
 
+    /**
+     * Checks the number of checkboxes you check when assigning resources.
+     * Disables the unchecked checkboxes if there's no more resource to assign.
+     */
     private void updateResourceCheckboxState() {
         boolean disableFood = foodCheckboxCount >= game.getFoodCount();
         boolean disableWater = waterCheckboxCount >= game.getWaterCount();
@@ -197,9 +253,19 @@ public class GameController {
         });
     }
 
+    /**
+     * Returns the content of the expedition tab inside a VBox.
+     * Inside, there's 2 ChoiceBoxes :
+     *  - the first allows to choose which character to send in expedition,
+     *  - the second allows to choose which item to take in the expedition.
+     *
+     * @return the VBox containing the choiceboxes
+     */
     private VBox buildExpeditionContent() {
         VBox pane = new VBox(new Label("Choisissez qui envoyer en expédition :"));
         HBox hbox = new HBox();
+
+        // For all alive characters, add it to the ChoiceBox which, when selected, will prepare the expedition character
         ChoiceBox<Character> cbCharacter = new ChoiceBox<>();
         cbCharacter.getItems().add(null);
         cbCharacter.getItems().addAll(aliveCharacters);
@@ -209,6 +275,7 @@ public class GameController {
                        expeditionCharacter = newValue;
         });
 
+        // For all items in the shelter, add it to the ChoiceBox which, when selected, will prepare the expedition item
         ChoiceBox<Item> cbItem = new ChoiceBox<>();
         cbItem.getItems().add(null);
         cbItem.getItems().addAll(game.getShelterInventory());
@@ -224,23 +291,36 @@ public class GameController {
         return pane;
     }
 
+    /**
+     * Resets the expedition character and item.
+     */
     private void resetExpeditionSetup() {
         expeditionCharacter = null;
         expeditionItem = null;
     }
 
+    /**
+     * Changes the expedition character and item.
+     */
     private void changeExpeditionSetup() {
         game.setExpeditionCharacter(expeditionCharacter);
         game.setExpeditionItem(expeditionItem);
     }
 
+    /**
+     * Setups the indoor event tab.
+     * If you click on the tab, it tries to trigger an event :
+     *  - if no event triggers, it displays that nothing is happening at the door,
+     *  - if an event happens, it shows up as a pop-up.
+     */
     private void setupIndoorEventTab() {
-        indoorEventTabHasBeenSelected = false;
         indoorEventTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue && !indoorEventTabHasBeenSelected) {
                 if (IndoorEvent.triggerRandomEvent(this)) {
                     indoorEventTab.setDisable(true);
+                    recapTab.setContent(buildRecapContent());
                     resourcesTab.setContent(buildResourcesContent());
+                    expeditionTab.setContent(buildExpeditionContent());
                 } else {
                     indoorEventTab.setContent(new Label("Vous n'avez rien entendu à la porte..."));
                 }
@@ -249,6 +329,12 @@ public class GameController {
         });
     }
 
+    /**
+     * Setups the button to pass to the next day.
+     * Checks if there's no character alive to end the game.
+     * Else, changes the expedition setup and processes the end of the day.
+     * Finally, it closes the journal and updates its content for the next day.
+     */
     private void setupNextDayButton() {
         nextDayButton.setOnAction(event -> {
             if (aliveCharacters.isEmpty() || game.getWinningMessage() != null) {
@@ -262,7 +348,13 @@ public class GameController {
         });
     }
 
+    /**
+     * Processes the end of a day.
+     * If a character has been sent to go on an expedition, triggers an outdoor event.
+     * Updates the game and all the sprites.
+     */
     private void processDayEnd() {
+        // Looks at all the resources checkboxes to know which character to assign each resource.
         resourcesCheckboxes.forEach((character, checkboxes) -> {
             if (checkboxes[0].isSelected()) {
                 character.decreaseDaysWithoutEating();
@@ -280,17 +372,30 @@ public class GameController {
         game.update();
     }
 
+    /**
+     * Saves the game.
+     *
+     * @param event
+     */
     @FXML
     private void saveGame(ActionEvent event) {
         game.save();
     }
 
+    /**
+     * Saves the game, then quit.
+     *
+     * @param event
+     */
     @FXML
     private void saveAndQuitGame(ActionEvent event) {
         saveGame(event);
         System.exit(0);
     }
 
+    /**
+     * Ends the game and switches to the end scene.
+     */
     public void endGame() {
         game.clear();
         try {

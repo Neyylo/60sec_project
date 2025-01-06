@@ -18,6 +18,10 @@ public class EndController {
     @FXML
     private Label endMessage;
 
+    /**
+     * Setups the background image and the end message using the winning message from the game
+     * at the initialization of the end scene.
+     */
     @FXML
     public void initialize() {
         String winningMessage = MainController.game.getWinningMessage();
@@ -35,6 +39,9 @@ public class EndController {
         }
     }
 
+    /**
+     * Returns to main menu scene.
+     */
     @FXML
     public void returnToMainMenu() {
         FXMLLoader mainMenu = new FXMLLoader(AppEntryPoint.class.getResource("main-view.fxml"));

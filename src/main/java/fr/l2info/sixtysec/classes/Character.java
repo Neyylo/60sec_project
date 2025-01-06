@@ -1,6 +1,7 @@
 package fr.l2info.sixtysec.classes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Character {
     private int id;
@@ -9,13 +10,13 @@ public class Character {
     private int daysWithoutDrinking;
     private boolean isAlive;
 
-    public static final ArrayList<Character> CHARACTERS = new ArrayList<>();
-
-    public static final Character johnBackflip          = new Character(1,"John Backflip");
-    public static final Character martapagnan           = new Character(2,"Martapagnan");
-    public static final Character stiveunneDeQuoicoubeh = new Character(3,"Stiveunne de Quoicoubeh");
-    public static final Character nolanBebou            = new Character(4,"Nolan Bébou");
-    public static final Character matheogingembre       = new Character(5,"Mathéogingembre");
+    public static ArrayList<Character> CHARACTERS = new ArrayList<>(List.of(
+            new Character(1,"John Backflip"),
+            new Character(2,"Martapagnan"),
+            new Character(3,"Stiveunne de Quoicoubeh"),
+            new Character(4,"Nolan Bébou"),
+            new Character(5,"Mathéogingembre")
+    ));
 
     /**
      * Instantiates a new Character.
@@ -32,7 +33,6 @@ public class Character {
         this.daysWithoutEating = daysWithoutEating;
         this.daysWithoutDrinking = daysWithoutDrinking;
         this.isAlive = isAlive;
-        CHARACTERS.add(this);
     }
 
     /**
@@ -185,6 +185,17 @@ public class Character {
         }
     }
 
+    /**
+     * Returns all the characters in CHARACTERS.
+     *
+     * @return the list containing all the characters
+     */
+    public static List<Character> getCharacters() {
+        List<Character> tmp = new ArrayList<>();
+        CHARACTERS.forEach(character -> tmp.add(character.clone()));
+        return tmp;
+    }
+
     @Override
     public String toString() {
         return name;
@@ -196,5 +207,10 @@ public class Character {
             return id == ((Character) o).id;
         }
         return false;
+    }
+
+    @Override
+    public Character clone() {
+        return new Character(id, name, daysWithoutEating, daysWithoutDrinking, isAlive);
     }
 }

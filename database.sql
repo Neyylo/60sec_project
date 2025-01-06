@@ -1,3 +1,6 @@
+CREATE DATABASE sixtysec;
+USE sixtysec;
+
 CREATE TABLE MyCharacter (
     id TINYINT UNSIGNED PRIMARY KEY NOT NULL,
     nom VARCHAR(30),

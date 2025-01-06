@@ -9,6 +9,9 @@ import java.io.IOException;
 
 public class RulesController {
 
+    /**
+     * Returns to the main menu when clicking the Back button.
+     */
     @FXML
     public void returnToMainMenu() {
         FXMLLoader mainMenu = new FXMLLoader(AppEntryPoint.class.getResource("main-view.fxml"));

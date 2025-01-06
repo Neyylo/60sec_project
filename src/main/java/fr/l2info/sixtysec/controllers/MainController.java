@@ -18,12 +18,18 @@ public class MainController {
     @FXML
     private Button continueButton;
 
+    /**
+     * Tries to get if a game is saved in the database when initializing.
+     */
     @FXML
     public void initialize() {
         game = myGameDAO.getGame();
         if (game == null) continueButton.setDisable(true);
     }
 
+    /**
+     * Shows the game scene.
+     */
     public void showGameScene() {
         FXMLLoader gameFXML = new FXMLLoader(AppEntryPoint.class.getResource("game-view.fxml"));
         Scene gameScene = null;
@@ -35,6 +41,9 @@ public class MainController {
         }
     }
 
+    /**
+     * Shows the rules scene.
+     */
     public void showRulesScene() {
         FXMLLoader rulesFXML = new FXMLLoader(AppEntryPoint.class.getResource("rules-view.fxml"));
         Scene rulesScene = null;
@@ -46,20 +55,42 @@ public class MainController {
         }
     }
 
+    /**
+     * Show the rules scene when pressing the rules button.
+     *
+     * @param actionEvent
+     */
     public void showRules(ActionEvent actionEvent) {
         showRulesScene();
     }
 
+    /**
+     * Creates a new game and shows the game scene when
+     * pressing the New Game button.
+     *
+     * @param actionEvent
+     */
     public void startNewGame(ActionEvent actionEvent) {
         if (game != null) game.clear();
         game = new Game();
         showGameScene();
     }
 
+    /**
+     * Uses the game saved in the database and shows the game scene when
+     * pressing the Continue button.
+     *
+     * @param actionEvent
+     */
     public void continueGame(ActionEvent actionEvent) {
         showGameScene();
     }
 
+    /**
+     * Exits the game when pressing the Quit button.
+     *
+     * @param actionEvent
+     */
     public void exit(ActionEvent actionEvent) {
         System.exit(0);
     }

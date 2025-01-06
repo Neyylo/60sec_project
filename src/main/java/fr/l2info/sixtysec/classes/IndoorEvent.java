@@ -42,10 +42,26 @@ public class IndoorEvent extends GameEvent {
      */
     public static final List<GameEvent> EVENTS = new ArrayList<>(List.of(
             new IndoorEvent(
+                "Un certain Nabil toque à la porte. Que voulez vous faire ?",
+                    "Lui ouvrir la porte",
+                "L'abandonner à son sort",
+                    0.01,
+                    (game -> {
+                        game.setWinningMessage("Vous avez gagné... le coeur de Nabil?");
+                        return "Nabil est en fait un dieu tout-puissant, qui met fin à l'apocalypse en un claquement de doigt.";
+                    }),
+                    (game -> {
+                        game.foodCount /= 2;
+                        game.waterCount /= 2;
+                        return "Nabil est en fait un dieu tout-puissant, qui réduit vos rations de moitié en un claquement de doigt.";
+                    })
+            ),
+
+            new IndoorEvent(
                     "Vous recevez une lettre glissée sous la porte. Elle vous offre une rencontre avec un mystérieux groupe. Que voulez-vous faire ?",
                     "Répondre à l'invitation",
                     "Ignorer la lettre",
-                    0.05,
+                    0.01,
                     (game -> {
                         game.setWinningMessage("Vous avez rejoint une nouvelle communauté !");
                         return "Le groupe était amical et a partagé ses vivres avec vous. L'apocalypse devient un peu plus supportable.";
@@ -61,7 +77,7 @@ public class IndoorEvent extends GameEvent {
                     "Quelqu'un toque à la porte du bunker. Que voulez vous faire ?",
                     "Ouvrir la porte",
                     "Ne pas ouvrir",
-                    0.05,
+                    0.01,
                     (game -> {
                         game.setWinningMessage("Vous avez été sauvés !");
                         return "Des militaires vous attendaient à l'entrée du bunker !\n" +

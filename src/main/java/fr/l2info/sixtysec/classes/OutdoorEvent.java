@@ -29,6 +29,9 @@ public class OutdoorEvent extends GameEvent {
      */
     public static void triggerRandomEvent(GameController gameController) {
         triggerRandomEvent(gameController, EVENTS, true);
+        Character expeditionCharacter = gameController.getGame().getExpeditionCharacter();
+        expeditionCharacter.incrementDaysWithoutDrinking();
+        expeditionCharacter.incrementDaysWithoutEating();
     }
 
     /**
@@ -86,9 +89,14 @@ public class OutdoorEvent extends GameEvent {
                             return "Un loup vous saute dessus, mais vous dégainez votre fusil et lui tirez dessus !\n"
                                     + "Vous transformez ainsi le loup mort en soupe que vous mettez dans 10 canettes.";
                         } else {
-                            game.removeItemFromInventory(Item.rifle);
+                            Item item = game.getExpeditionItem();
+                            String itemText = "";
+                            if (item != null) {
+                                game.removeItemFromInventory(item);
+                                itemText = ", et en fuyant, vous perdez votre "+item.getName();
+                            }
                             return "Un loup vous saute dessus !\n"
-                                    + "Il vous mord et vous blesse, et en fuyant, vous perdez votre fusil !";
+                                    + "Il vous mord et vous blesse"+ itemText +" !";
                         }
                     }),
                     (game -> "Vous entendez un loup grogner derrière vous, et prenez vos jambes à votre cou !")

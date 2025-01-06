@@ -1,10 +1,11 @@
 package fr.l2info.sixtysec.classes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Item implements Comparable<Item> {
 
-    public static final ArrayList<Item> ITEMS = new ArrayList<Item>();
+    public static final List<Item> ITEMS = new ArrayList<Item>();
 
     public static final Item gasMask = new Item(1, "Masque à gaz");
     public static final Item rifle = new Item(2, "Fusil");

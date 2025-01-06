@@ -96,9 +96,6 @@ public abstract class GameEvent {
             showSummary(summaryText);
             if (game.getWinningMessage() != null) gameController.endGame();
         });
-
-        game.getExpeditionCharacter().incrementDaysWithoutDrinking();
-        game.getExpeditionCharacter().incrementDaysWithoutEating();
     }
 
     /**

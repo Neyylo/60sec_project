@@ -26,9 +26,9 @@ public class AppEntryPoint extends Application {
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);
         fadeOut.setOnFinished(e -> {
-            // Une fois la transition terminée, changer la scène
+            // Once the transition finished, change the scene
             stage.setScene(scene);
-            // Ajouter une transition à l'entrée de la nouvelle scène
+            // Add a fade in transition to the new scene
             FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), scene.getRoot());
             fadeIn.setFromValue(0.0);
             fadeIn.setToValue(1.0);

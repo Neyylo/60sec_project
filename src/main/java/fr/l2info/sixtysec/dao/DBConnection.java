@@ -43,6 +43,12 @@ public class DBConnection {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Gets connection.
+     *
+     * @return the connection
+     */
     public static Connection getConnection() {
         if (connection == null) {
             new DBConnection();
@@ -50,6 +56,9 @@ public class DBConnection {
         return connection;
     }
 
+    /**
+     * Closes connection.
+     */
     public static void closeConnection() {
         try {
             connection.close();

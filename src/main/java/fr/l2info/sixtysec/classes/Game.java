@@ -43,10 +43,11 @@ public class Game {
         day = 1;
         Random random = new Random();
 
+
         // Random initialisation of the characters
-        ArrayList<Character> tempCharacters = new ArrayList<>(Character.CHARACTERS);
+        List<Character> tempCharacters = Character.getCharacters();
         Collections.shuffle(tempCharacters);
-        int sizeCharacters = Character.CHARACTERS.size();
+        int sizeCharacters = tempCharacters.size();
         characters.addAll(tempCharacters.subList(0, random.nextInt(3,sizeCharacters)));
 
         // Calculation of the food and water counts by the number of characters
@@ -55,7 +56,7 @@ public class Game {
         waterCount = 2 * characterCount;
 
         // Random initialisation of the items
-        ArrayList<Item> tempInventory = new ArrayList<>(Item.ITEMS);
+        List<Item> tempInventory = new ArrayList<>(Item.ITEMS);
         Collections.shuffle(tempInventory);
         int sizeInventory = tempInventory.size();
         shelterInventory.addAll(tempInventory.subList(0, random.nextInt(1, sizeInventory + 1)));
@@ -159,16 +160,16 @@ public class Game {
     }
 
     /**
-     * Sets expedition character.
+     * Sets the expedition character.
      *
-     * @param expeditionCharacter the expedition character
+     * @param expeditionCharacter the new expedition character
      */
     public void setExpeditionCharacter(Character expeditionCharacter) {
         this.expeditionCharacter = expeditionCharacter;
     }
 
     /**
-     * Gets expedition item.
+     * Gets the expedition item.
      *
      * @return the expedition item
      */
@@ -177,36 +178,36 @@ public class Game {
     }
 
     /**
-     * Sets expedition item.
+     * Sets the expedition item.
      *
-     * @param expeditionItem the expedition item
+     * @param expeditionItem the new expedition item
      */
     public void setExpeditionItem(Item expeditionItem) {
         this.expeditionItem = expeditionItem;
     }
 
     /**
-     * Add character.
+     * Adds a character to the bunker.
      *
-     * @param character the character
+     * @param character the character to add
      */
     public void addCharacter(Character character) {
         characters.add(character);
     }
 
     /**
-     * Remove character.
+     * Removes a character from the bunker.
      *
-     * @param character the character
+     * @param character the character to remove
      */
     public void removeCharacter(Character character) {
         characters.remove(character);
     }
 
     /**
-     * Add item to inventory.
+     * Adds an item to inventory.
      *
-     * @param item the item
+     * @param item the item to add
      */
     public void addItemToInventory(Item item) {
         shelterInventory.add(item);
@@ -215,14 +216,14 @@ public class Game {
     /**
      * Remove item from inventory.
      *
-     * @param item the item
+     * @param item the item to remove
      */
     public void removeItemFromInventory(Item item) {
         shelterInventory.remove(item);
     }
 
     /**
-     * Gets winning message.
+     * Gets the winning message.
      *
      * @return the winning message
      */
@@ -240,7 +241,11 @@ public class Game {
     }
 
     /**
-     * Update.
+     * Updates the game :
+     *  - increases hunger and thirst of the characters
+     *  - removes dead characters from the list
+     *  - resets the expedition
+     *  - increments the day
      */
     public void update() {
         for (Character character : characters) {
@@ -257,7 +262,7 @@ public class Game {
     }
 
     /**
-     * Save.
+     * Save the game to the database using the DAOs
      */
     public void save() {
         MyCharacterDAOImpl characterDAO = new MyCharacterDAOImpl();
@@ -284,7 +289,7 @@ public class Game {
     }
 
     /**
-     * Clear.
+     * Clears the game from the database using the DAOs
      */
     public void clear() {
         MyCharacterDAOImpl characterDAO = new MyCharacterDAOImpl();
