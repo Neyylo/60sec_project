@@ -10,24 +10,24 @@ import java.util.function.Function;
 
 public abstract class GameEvent {
 
-    protected final String description; // Description de l'événement
-    protected final String goodChoiceText; // Texte pour le bon choix
-    protected final String badChoiceText; // Texte pour le mauvais choix
-    protected final Function<Game,String> goodChoiceAction; // Action pour le bon choix
-    protected final Function<Game,String> badChoiceAction; // Action pour le mauvais choix
-    protected final double probability; // Probabilité d'occurrence de l'événement
+    protected final String description;
+    protected final String goodChoiceText;
+    protected final String badChoiceText;
+    protected final Function<Game,String> goodChoiceAction;
+    protected final Function<Game,String> badChoiceAction;
+    protected final double probability;
 
     protected static final Random RANDOM = new Random();
 
     /**
-     * Constructeur d'évenement
+     * GameEvent constructor.
      *
-     * @param description      La description de l'événement
-     * @param goodChoiceText   Texte pour le bon choix
-     * @param badChoiceText    Texte pour le mauvais choix
-     * @param probability      Probabilité que l'événement se produise (entre 0.0 et 1.0)
-     * @param goodChoiceAction Action pour le bon choix
-     * @param badChoiceAction  Action pour le mauvais choix
+     * @param description      Event description
+     * @param goodChoiceText   Text for the good choice
+     * @param badChoiceText    Text for the bad choice
+     * @param probability      Probability of the event happening (between 0 and 1)
+     * @param goodChoiceAction Action for the good choice
+     * @param badChoiceAction  Action for the bad choice
      */
     public GameEvent(String description, String goodChoiceText, String badChoiceText, double probability,
                         Function<Game,String> goodChoiceAction, Function<Game,String> badChoiceAction) {
@@ -43,9 +43,12 @@ public abstract class GameEvent {
     }
 
     /**
-     * Choisit un événement aléatoire dans une liste et le déclenche
+     * Chooses a random event in the list of events and triggers it.
      *
-     * @param gameController le contrôleur de jeu actuel
+     * @param gameController    the actual GameController
+     * @param events            the list of events
+     * @param alwaysPlayAnEvent if the trigger should always play an event
+     * @return has an event been triggered
      */
     protected static boolean triggerRandomEvent(GameController gameController, List<GameEvent> events, boolean alwaysPlayAnEvent) {
         GameEvent randomEvent = null;
@@ -67,9 +70,9 @@ public abstract class GameEvent {
     }
 
     /**
-     * Affiche l'événement sous forme de pop-up et exécute l'action choisie
+     * Displays the event in a pop-up for the player to interact with
      *
-     * @param gameController le contrôleur de jeu actuel
+     * @param gameController the actual GameController
      */
     protected void trigger(GameController gameController) {
         Game game = gameController.getGame();
@@ -93,8 +96,16 @@ public abstract class GameEvent {
             showSummary(summaryText);
             if (game.getWinningMessage() != null) gameController.endGame();
         });
+
+        game.getExpeditionCharacter().incrementDaysWithoutDrinking();
+        game.getExpeditionCharacter().incrementDaysWithoutEating();
     }
 
+    /**
+     * Shows the summary of the event in another pop-up.
+     *
+     * @param text the summary of the event
+     */
     public void showSummary(String text) {
         Alert summaryAlert = new Alert(Alert.AlertType.INFORMATION);
         summaryAlert.setTitle("Résumé de l'événement");

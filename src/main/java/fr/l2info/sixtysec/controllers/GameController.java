@@ -235,15 +235,16 @@ public class GameController {
     }
 
     private void setupIndoorEventTab() {
+        indoorEventTabHasBeenSelected = false;
         indoorEventTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue && !indoorEventTabHasBeenSelected) {
-                indoorEventTabHasBeenSelected = true;
                 if (IndoorEvent.triggerRandomEvent(this)) {
                     indoorEventTab.setDisable(true);
-                    updateTabState();
+                    resourcesTab.setContent(buildResourcesContent());
                 } else {
                     indoorEventTab.setContent(new Label("Vous n'avez rien entendu à la porte..."));
                 }
+                indoorEventTabHasBeenSelected = true;
             }
         });
     }

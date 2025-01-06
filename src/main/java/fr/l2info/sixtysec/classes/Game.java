@@ -17,6 +17,15 @@ public class Game {
     private Character expeditionCharacter = null;
     private String winningMessage = null;
 
+    /**
+     * Instantiates a new game using retrieved data.
+     *
+     * @param day              the day since start
+     * @param foodCount        the food count
+     * @param waterCount       the water count
+     * @param characters       the characters
+     * @param shelterInventory the shelter inventory
+     */
     public Game(int day, int foodCount, int waterCount, List<Character> characters, List<Item> shelterInventory) {
         this.day = day;
         this.foodCount = foodCount;
@@ -27,22 +36,25 @@ public class Game {
         this.expeditionCharacter = null;
     }
 
+    /**
+     * Instantiates a new game with random characters and inventory.
+     */
     public Game() {
         day = 1;
         Random random = new Random();
 
-        // Initialisation aléatoire des personnages
+        // Random initialisation of the characters
         ArrayList<Character> tempCharacters = new ArrayList<>(Character.CHARACTERS);
         Collections.shuffle(tempCharacters);
-        int sizeCharacters = tempCharacters.size();
-        characters.addAll(tempCharacters.subList(0, random.nextInt(3, sizeCharacters)));
+        int sizeCharacters = Character.CHARACTERS.size();
+        characters.addAll(tempCharacters.subList(0, random.nextInt(3,sizeCharacters)));
 
-        // Calcul des ressources initiales en fonction du nombre de personnages
+        // Calculation of the food and water counts by the number of characters
         int characterCount = characters.size();
         foodCount = 2 * characterCount;
         waterCount = 2 * characterCount;
 
-        // Initialisation aléatoire des items
+        // Random initialisation of the items
         ArrayList<Item> tempInventory = new ArrayList<>(Item.ITEMS);
         Collections.shuffle(tempInventory);
         int sizeInventory = tempInventory.size();
@@ -53,73 +65,183 @@ public class Game {
     }
 
     // Getters and setters
+    /**
+     * Gets the current day.
+     *
+     * @return the day
+     */
     public int getDay() {
         return day;
     }
+
+    /**
+     * Increment the day.
+     */
     public void incrementDay() {
         this.day++;
     }
+
+    /**
+     * Gets the food count.
+     *
+     * @return the food count
+     */
     public int getFoodCount() {
         return foodCount;
     }
+
+    /**
+     * Sets the food count.
+     *
+     * @param foodCount the new food count
+     */
     public void setFoodCount(int foodCount) {
         this.foodCount = foodCount;
     }
+
+    /**
+     * Decrements the food count.
+     */
     public void decrementFoodCount() {
         if (foodCount > 0) foodCount--;
     }
+
+    /**
+     * Gets the water count.
+     *
+     * @return the water count
+     */
     public int getWaterCount() {
         return waterCount;
     }
+
+    /**
+     * Sets the water count.
+     *
+     * @param waterCount the new water count
+     */
     public void setWaterCount(int waterCount) {
         this.waterCount = waterCount;
     }
+
+    /**
+     * Decrements the water count.
+     */
     public void decrementWaterCount() {
         if (waterCount > 0) waterCount--;
     }
+
+    /**
+     * Gets the characters.
+     *
+     * @return the characters
+     */
     public ArrayList<Character> getCharacters() {
         return characters;
     }
+
+    /**
+     * Gets the shelter inventory.
+     *
+     * @return the shelter inventory
+     */
     public ArrayList<Item> getShelterInventory() {
         return shelterInventory;
     }
+
+    /**
+     * Gets the expedition character.
+     *
+     * @return the expedition character
+     */
     public Character getExpeditionCharacter() {
         return expeditionCharacter;
     }
+
+    /**
+     * Sets expedition character.
+     *
+     * @param expeditionCharacter the expedition character
+     */
     public void setExpeditionCharacter(Character expeditionCharacter) {
         this.expeditionCharacter = expeditionCharacter;
     }
+
+    /**
+     * Gets expedition item.
+     *
+     * @return the expedition item
+     */
     public Item getExpeditionItem() {
         return expeditionItem;
     }
+
+    /**
+     * Sets expedition item.
+     *
+     * @param expeditionItem the expedition item
+     */
     public void setExpeditionItem(Item expeditionItem) {
         this.expeditionItem = expeditionItem;
     }
 
+    /**
+     * Add character.
+     *
+     * @param character the character
+     */
     public void addCharacter(Character character) {
         characters.add(character);
     }
 
+    /**
+     * Remove character.
+     *
+     * @param character the character
+     */
     public void removeCharacter(Character character) {
         characters.remove(character);
     }
 
+    /**
+     * Add item to inventory.
+     *
+     * @param item the item
+     */
     public void addItemToInventory(Item item) {
         shelterInventory.add(item);
     }
 
+    /**
+     * Remove item from inventory.
+     *
+     * @param item the item
+     */
     public void removeItemFromInventory(Item item) {
         shelterInventory.remove(item);
     }
 
+    /**
+     * Gets winning message.
+     *
+     * @return the winning message
+     */
     public String getWinningMessage() {
         return winningMessage;
     }
 
+    /**
+     * Sets winning message.
+     *
+     * @param winningMessage the winning message
+     */
     public void setWinningMessage(String winningMessage) {
         this.winningMessage = winningMessage;
     }
 
+    /**
+     * Update.
+     */
     public void update() {
         for (Character character : characters) {
             character.incrementDaysWithoutEating();
@@ -134,6 +256,9 @@ public class Game {
         incrementDay();
     }
 
+    /**
+     * Save.
+     */
     public void save() {
         MyCharacterDAOImpl characterDAO = new MyCharacterDAOImpl();
         MyItemDAOImpl itemDAO = new MyItemDAOImpl();
@@ -149,10 +274,8 @@ public class Game {
         }
         if (lastSavedItems != null && !lastSavedItems.isEmpty()) {
             lastSavedItems.forEach(itemDAO::delete);
-            shelterInventory.forEach(itemDAO::create);
-        } else {
-            shelterInventory.forEach(itemDAO::create);
         }
+        shelterInventory.forEach(itemDAO::create);
         if (gameDAO.getGame() != null) {
             gameDAO.update(this);
         } else {
@@ -160,6 +283,9 @@ public class Game {
         }
     }
 
+    /**
+     * Clear.
+     */
     public void clear() {
         MyCharacterDAOImpl characterDAO = new MyCharacterDAOImpl();
         MyItemDAOImpl itemDAO = new MyItemDAOImpl();

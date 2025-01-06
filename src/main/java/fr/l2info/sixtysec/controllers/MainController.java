@@ -2,7 +2,6 @@ package fr.l2info.sixtysec.controllers;
 
 import fr.l2info.sixtysec.AppEntryPoint;
 import fr.l2info.sixtysec.classes.Game;
-import fr.l2info.sixtysec.dao.MyGameDAO;
 import fr.l2info.sixtysec.dao.MyGameDAOImpl;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

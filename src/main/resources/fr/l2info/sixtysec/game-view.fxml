@@ -22,29 +22,29 @@
             <Image url="@images/background.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="char1" fitHeight="120.0" fitWidth="80.0" focusTraversable="true" layoutX="144.0" layoutY="274.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="char1" fitHeight="120.0" fitWidth="80.0" focusTraversable="true" layoutX="291.0" layoutY="201.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@images/matheogingembre.png" />
+            <Image url="@images/john.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="char2" fitHeight="120.0" fitWidth="80.0" focusTraversable="true" layoutX="212.0" layoutY="255.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="char2" fitHeight="99.0" fitWidth="64.0" focusTraversable="true" layoutX="220.0" layoutY="209.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@images/matheogingembre.png" />
+            <Image url="@images/martin.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="char3" fitHeight="120.0" fitWidth="80.0" focusTraversable="true" layoutX="292.0" layoutY="248.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="char3" fitHeight="144.0" fitWidth="212.0" focusTraversable="true" layoutX="285.0" layoutY="287.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@images/matheogingembre.png" />
+            <Image url="@images/stiveunne.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="char4" fitHeight="120.0" fitWidth="80.0" focusTraversable="true" layoutX="391.0" layoutY="248.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="char4" fitHeight="93.0" fitWidth="57.0" focusTraversable="true" layoutX="403.0" layoutY="213.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@images/matheogingembre.png" />
+            <Image url="@images/nolan.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="char5" fitHeight="120.0" fitWidth="80.0" focusTraversable="true" layoutX="351.0" layoutY="338.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="char5" fitHeight="102.0" fitWidth="80.0" focusTraversable="true" layoutX="140.0" layoutY="229.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
-            <Image url="@images/matheogingembre.png" />
+            <Image url="@images/matheo.png" />
          </image>
       </ImageView>
       <Button fx:id="journalButton" alignment="TOP_LEFT" cache="true" contentDisplay="CENTER" layoutX="444.0" layoutY="306.0" mnemonicParsing="false" prefHeight="144.0" prefWidth="195.0" style="-fx-background-color: transparent;" text="Journal" textFill="TRANSPARENT">
