@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class EndController {
 
@@ -20,7 +21,12 @@ public class EndController {
     @FXML
     public void initialize() {
         String winningMessage = MainController.game.getWinningMessage();
-        if (winningMessage != null) {
+        if (Objects.equals(winningMessage, "Vous avez gagné... le coeur de Nabil?")) {
+            endMessage.setText(winningMessage);
+            Image image = new Image(AppEntryPoint.class.getResourceAsStream("images/nabilAnge.png"));
+            endImage.setImage(image);
+        }
+        else if (winningMessage != null) {
             endMessage.setText(winningMessage);
             Image image = new Image(AppEntryPoint.class.getResourceAsStream("images/rules_and_win.jpg"));
             endImage.setImage(image);
